@@ -29,9 +29,11 @@ from Deeploy.Targets.Snitch.Deployer import SnitchDeployer
 from Deeploy.Targets.Snitch.Platform import SnitchOptimizer, SnitchPlatform
 from Deeploy.Targets.SoftHier.Deployer import SoftHierDeployer
 from Deeploy.Targets.SoftHier.Platform import SoftHierOptimizer, SoftHierPlatform
+from Deeploy.Targets.Torik.Deployer import TorikDeployer
+from Deeploy.Targets.Torik.Platform import TorikPlatform
 
 _SIGNPROP_PLATFORMS = ["Apollo3", "Apollo4", "QEMU-ARM", "Generic", "MemPool", "SoftHier"]
-_NONSIGNPROP_PLATFORMS = ["Siracusa", "Siracusa_w_neureka", "PULPOpen", "Snitch", "Chimera", "GAP9", "XDNA2"]
+_NONSIGNPROP_PLATFORMS = ["Siracusa", "Siracusa_w_neureka", "PULPOpen", "Snitch", "Torik", "Chimera", "GAP9", "XDNA2"]
 _PLATFORMS = _SIGNPROP_PLATFORMS + _NONSIGNPROP_PLATFORMS
 
 
@@ -69,6 +71,9 @@ def mapPlatform(platformName: str) -> Tuple[DeploymentPlatform, bool]:
 
     elif platformName == "Snitch":
         Platform = SnitchPlatform()
+
+    elif platformName == "Torik":
+        Platform = TorikPlatform()
 
     elif platformName == "SoftHier":
         Platform = SoftHierPlatform()
@@ -244,6 +249,24 @@ def mapDeployer(platform: DeploymentPlatform,
                                 name = name,
                                 default_channels_first = default_channels_first,
                                 deeployStateDir = deeployStateDir)
+
+    elif isinstance(platform, (TorikPlatform)):
+        # Must precede the SnitchPlatform branch below: TorikPlatform is a subclass
+        # of it, so the Snitch branch would otherwise claim it first.
+        if loweringOptimizer is None:
+            loweringOptimizer = SnitchOptimizer
+
+        if default_channels_first is None:
+            default_channels_first = False
+
+        deployer = TorikDeployer(graph,
+                                 platform,
+                                 inputTypes,
+                                 loweringOptimizer,
+                                 scheduler,
+                                 name = name,
+                                 default_channels_first = default_channels_first,
+                                 deeployStateDir = deeployStateDir)
 
     elif isinstance(platform, (SnitchPlatform)):
         if loweringOptimizer is None:

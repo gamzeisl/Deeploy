@@ -43,6 +43,9 @@ from test_snitch_tiled_config import L2_SINGLEBUFFER_MODELS as SNITCH_L2_SINGLEB
 from test_softhier_config import DEFAULT_NUM_CLUSTERS as SOFTHIER_DEFAULT_NUM_CLUSTERS
 from test_softhier_config import KERNEL_TESTS as SOFTHIER_KERNEL_TESTS
 from test_softhier_config import MODEL_TESTS as SOFTHIER_MODEL_TESTS
+from test_torik_config import DEFAULT_NUM_CORES as TORIK_DEFAULT_NUM_CORES
+from test_torik_config import KERNEL_TESTS as TORIK_KERNEL_TESTS
+from test_torik_config import MODEL_TESTS as TORIK_MODEL_TESTS
 from test_xdna2_config import KERNEL_TESTS as XDNA2_KERNEL_TESTS
 from testUtils.pytestRunner import create_test_config, run_and_assert_test
 
@@ -112,6 +115,13 @@ PLATFORM_CONFIGS = {
         "model_tests": SNITCH_MODEL_TESTS,
         "default_num_cores": SNITCH_DEFAULT_NUM_CORES,
     },
+    "torik": {
+        "platform": "Torik",
+        "simulator": "vsim",
+        "kernel_tests": TORIK_KERNEL_TESTS,
+        "model_tests": TORIK_MODEL_TESTS,
+        "default_num_cores": TORIK_DEFAULT_NUM_CORES,
+    },
     "gap9": {
         "platform": "GAP9",
         "simulator": "gvsoc",
@@ -135,6 +145,8 @@ PLATFORM_CONFIGS = {
 #   softhier: tests from the SoftHier platform
 #   snitch: tests from the Snitch platform (untiled)
 #   snitch_tiled: tests from the Snitch platform (tiled)
+#   torik: tests from the Torik platform (untiled)
+#   torik_tiled: tests from the Torik platform (tiled)
 #   siracusa: tests from the Siracusa platform (untiled)
 #   siracusa_tiled: tests from the Siracusa platform (tiled)
 #   siracusa_neureka_tiled: tests from the Siracusa + Neureka platform (tiled)
@@ -622,6 +634,27 @@ def test_snitch_tiled_models_l2_singlebuffer(test_params, deeploy_test_dir, tool
         l2 = 4000000,
         default_mem_level = "L2",
         double_buffer = False,
+    )
+    run_and_assert_test(test_name, config, skipgen, skipsim)
+
+
+@pytest.mark.torik
+@pytest.mark.kernels
+@pytest.mark.parametrize("test_name", TORIK_KERNEL_TESTS, ids = TORIK_KERNEL_TESTS)
+def test_torik_kernels(test_name, deeploy_test_dir, toolchain, toolchain_dir, cmake_args, skipgen, skipsim) -> None:
+    platform_config = PLATFORM_CONFIGS["torik"]
+
+    torik_cmake_args = cmake_args + [f"NUM_CORES={platform_config['default_num_cores']}"]
+
+    config = create_test_config(
+        test_name = test_name,
+        platform = platform_config["platform"],
+        simulator = platform_config["simulator"],
+        deeploy_test_dir = deeploy_test_dir,
+        toolchain = toolchain,
+        toolchain_dir = toolchain_dir,
+        cmake_args = torik_cmake_args,
+        tiling = False,
     )
     run_and_assert_test(test_name, config, skipgen, skipsim)
 
