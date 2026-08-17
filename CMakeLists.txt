@@ -20,8 +20,8 @@ if(TOOLCHAIN STREQUAL GCC)
   set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
-set(platform MemPool CACHE STRING "Platform (MemPool, SoftHier, QEMU, Siracusa, Siracusa_w_neureka, PULP-Open, GAP9, Generic, Snitch)")
-set_property(CACHE platform PROPERTY STRINGS MemPool SoftHier QEMU Siracusa Siracusa_w_neureka PULP-Open GAP9 Generic Snitch)
+set(platform MemPool CACHE STRING "Platform (MemPool, SoftHier, QEMU, Siracusa, Siracusa_w_neureka, PULP-Open, GAP9, Generic, Snitch, Torik)")
+set_property(CACHE platform PROPERTY STRINGS MemPool SoftHier QEMU Siracusa Siracusa_w_neureka PULP-Open GAP9 Generic Snitch Torik)
 
 if(platform STREQUAL MemPool)
   message(STATUS "Building for platform 'MemPool'")
@@ -51,6 +51,8 @@ elseif(platform STREQUAL Generic)
   message(STATUS "Building for platform 'Generic'")
 elseif(platform STREQUAL Snitch)
   message(STATUS "Building for platform 'Snitch'")
+elseif(platform STREQUAL Torik)
+  message(STATUS "Building for platform 'Torik'")
 elseif(platform STREQUAL SoftHier)
   message(STATUS "Building for platform 'SoftHier'")
 elseif(platform STREQUAL Chimera)
@@ -255,7 +257,7 @@ if(platform STREQUAL GAP9)
 
 endif()
 
-if(platform STREQUAL Snitch)
+if(platform STREQUAL Snitch OR platform STREQUAL Torik)
 
   if(TOOLCHAIN STREQUAL LLVM)
     set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_LIST_DIR}/cmake/snitch/toolchain_llvm.cmake)
@@ -265,7 +267,11 @@ if(platform STREQUAL Snitch)
 
   include(${CMAKE_CURRENT_LIST_DIR}/cmake/snitch/snitch.cmake)
 
-  include(${CMAKE_CURRENT_LIST_DIR}/cmake/snitch/snitch_cluster/snitch_cluster.cmake)
+  if(platform STREQUAL Torik)
+    include(${CMAKE_CURRENT_LIST_DIR}/cmake/snitch/torik_cluster/torik_cluster.cmake)
+  else()
+    include(${CMAKE_CURRENT_LIST_DIR}/cmake/snitch/snitch_cluster/snitch_cluster.cmake)
+  endif()
 
   project(deeploy LANGUAGES C CXX ASM)
 

@@ -30,6 +30,7 @@ GAP_RISCV_GCC_INSTALL_DIR ?= ${GCC_INSTALL_DIR}/gap9
 CHIMERA_SDK_INSTALL_DIR ?= ${DEEPLOY_INSTALL_DIR}/chimera-sdk
 PULP_SDK_INSTALL_DIR ?= ${DEEPLOY_INSTALL_DIR}/pulp-sdk
 SNITCH_INSTALL_DIR ?= ${DEEPLOY_INSTALL_DIR}/snitch_cluster
+TORIK_INSTALL_DIR ?= ${DEEPLOY_INSTALL_DIR}/torik_cluster
 QEMU_INSTALL_DIR ?= ${DEEPLOY_INSTALL_DIR}/qemu
 BANSHEE_INSTALL_DIR ?= ${DEEPLOY_INSTALL_DIR}/banshee
 MEMPOOL_INSTALL_DIR ?= ${DEEPLOY_INSTALL_DIR}/mempool
@@ -48,6 +49,7 @@ PICOLIBC_COMMIT_HASH ?= 31ff1b3601b379e4cab63837f253f59729ce1fef
 PULP_SDK_COMMIT_HASH ?= 7f4f22516157a1b7c55bcbbc72ca81326180b3b4
 MEMPOOL_COMMIT_HASH ?= affd45d94e05e375a6966af6a762deeb182a7bd6
 SNITCH_COMMIT_HASH ?= 5b2fccd96c42812774c20ab2f9b811e164809789
+TORIK_COMMIT_HASH ?= 886dbcd44988f95c3cc4d5ae34e6638b4f038094
 SOFTHIER_COMMIT_HASH ?= 0       # bowwang: to be updated
 GVSOC_COMMIT_HASH ?= edfcd8398840ceb1e151711befa06678b05f06a0
 MINIMALLOC_COMMMIT_HASH ?= e9eaf54094025e1c246f9ec231b905f8ef42a29d
@@ -94,6 +96,7 @@ echo-bash:
 	@echo "export GAP_RISCV_GCC_TOOLCHAIN=${GAP_RISCV_GCC_INSTALL_DIR}"
 	@echo "export CHIMERA_SDK_HOME=${CHIMERA_SDK_INSTALL_DIR}"
 	@echo "export SNITCH_HOME=${SNITCH_INSTALL_DIR}"
+	@echo "export TORIK_HOME=${TORIK_INSTALL_DIR}"
 	@echo "export GVSOC_INSTALL_DIR=${GVSOC_INSTALL_DIR}"
 	@echo "export SOFTHIER_INSTALL_DIR=${SOFTHIER_INSTALL_DIR}"
 	@echo "export LLVM_INSTALL_DIR=${LLVM_INSTALL_DIR}"
@@ -463,6 +466,45 @@ ${SNITCH_INSTALL_DIR}: ${TOOLCHAIN_DIR}/snitch_cluster
 	     sn-runtime
 
 snitch_runtime: ${SNITCH_INSTALL_DIR}
+
+${TOOLCHAIN_DIR}/torik_cluster:
+	cd ${TOOLCHAIN_DIR} && \
+	git clone git@iis-git.ee.ethz.ch:torik/rtl/snitch_cluster.git torik_cluster && \
+	cd ${TOOLCHAIN_DIR}/torik_cluster && git checkout ${TORIK_COMMIT_HASH} && \
+	git submodule update --init --recursive
+
+TORIK_RISCV_ARCH ?= rv32imafd
+TORIK_RISCV_FLAGS = -target riscv32-unknown-elf \
+                    -isystem ${LLVM_INSTALL_DIR}/picolibc/riscv/${TORIK_RISCV_ARCH}/include \
+                    -L${LLVM_INSTALL_DIR}/picolibc/riscv/${TORIK_RISCV_ARCH}/lib \
+                    -L${LLVM_INSTALL_DIR}/lib/clang/15.0.0/lib/baremetal/${TORIK_RISCV_ARCH} \
+                    -Wno-unused-command-line-argument
+
+${TORIK_INSTALL_DIR}: ${TOOLCHAIN_DIR}/torik_cluster
+	mkdir -p ${TORIK_INSTALL_DIR}
+	cp -r ${TOOLCHAIN_DIR}/torik_cluster/ ${TORIK_INSTALL_DIR}/../
+	cd ${TORIK_INSTALL_DIR} && \
+	mkdir tmp && \
+	TMPDIR=tmp pip install . && rm -rf tmp && \
+	make CFG_OVERRIDE=cfg/torik.json \
+	     SN_LLVM_BINROOT=${LLVM_INSTALL_DIR}/bin \
+	     SN_RISCV_CC="${LLVM_INSTALL_DIR}/bin/clang ${TORIK_RISCV_FLAGS}" \
+	     SN_RISCV_CXX="${LLVM_INSTALL_DIR}/bin/clang++ ${TORIK_RISCV_FLAGS}" \
+	     sn-runtime
+
+torik_runtime: ${TORIK_INSTALL_DIR}
+
+${TORIK_INSTALL_DIR}/target/sim/build/bin/torik_cluster.vsim: ${TORIK_INSTALL_DIR}
+	cd ${TORIK_INSTALL_DIR} && \
+	make CFG_OVERRIDE=cfg/torik.json \
+	     SN_LLVM_BINROOT=${LLVM_INSTALL_DIR}/bin \
+	     SN_RISCV_CC="${LLVM_INSTALL_DIR}/bin/clang ${TORIK_RISCV_FLAGS}" \
+	     SN_RISCV_CXX="${LLVM_INSTALL_DIR}/bin/clang++ ${TORIK_RISCV_FLAGS}" \
+	     SN_QUESTA_SEPP=questa-2026.1 \
+	     SN_VERILATOR_SEPP=verilator-5.020 \
+	     vsim
+
+torik_vsim: ${TORIK_INSTALL_DIR}/target/sim/build/bin/torik_cluster.vsim
 
 ${TOOLCHAIN_DIR}/gvsoc:
 	cd ${TOOLCHAIN_DIR} && \
