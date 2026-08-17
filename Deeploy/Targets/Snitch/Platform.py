@@ -22,6 +22,7 @@ from Deeploy.Targets.Generic.TopologyOptimizationPasses.Passes import AddRequant
     IntegerDivRequantMergePass, MergeConstAddAndRequantPass, MergeTrueIntegerDivRequantShiftPass, RQSSplitPass, \
     SkipEmptyConcatPass, SkipUnityRequantPass, iGELURequantMergePass, iHardswishRequantMergePass
 from Deeploy.Targets.PULPOpen.Platform import RQAddMapper
+from Deeploy.Targets.Snitch.Layers import SnitchAddLayer, SnitchMulLayer
 from Deeploy.Targets.Snitch.Parsers import SnitchAddParser, SnitchDivParser, SnitchGEMMParser, SnitchHardSwishParser, \
     SnitchMulParser, SnitchRMSNormParser, SnitchRQGEMMParser
 from Deeploy.Targets.Snitch.Templates import AllocateTemplate, FreeTemplate
@@ -69,11 +70,11 @@ SnitchMapping = {
     'iNoNorm': iNoNormLayer([iNoNormMapper]),
     'iLayerNorm': LayerNormLayer([iLayerNormMapper]),
     'RequantizedAdd': AddLayer([RQAddMapper]),
-    'Add': AddLayer([AddMapper]),
+    'Add': SnitchAddLayer([AddMapper]),
     'RMSNorm': RMSNormLayer([RMSNormMapper]),
     'HardSwish': HardSwishLayer([HardSwishMapper]),
     'Div': DivLayer([DivMapper]),
-    'Mul': MulLayer([MulMapper]),
+    'Mul': SnitchMulLayer([MulMapper]),
     'Reshape': ReshapeLayer([ReshapeMapper]),
     'Transpose': TransposeLayer([TransposeMapper]),
     'Concat': ConcatLayer([ConcatMapper]),
