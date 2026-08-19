@@ -1,0 +1,34 @@
+.. SPDX-FileCopyrightText: 2024 ETH Zurich and University of Bologna
+..
+.. SPDX-License-Identifier: Apache-2.0
+
+Deeploy.Targets.Torik.Platform.TorikPlatform
+============================================
+
+.. currentmodule:: Deeploy.Targets.Torik.Platform
+
+.. autoclass:: TorikPlatform
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Methods
+   .. automethod:: __init__
+
+   .. autosummary::
+   
+      ~TorikPlatform.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TorikPlatform.engines
+   
+   

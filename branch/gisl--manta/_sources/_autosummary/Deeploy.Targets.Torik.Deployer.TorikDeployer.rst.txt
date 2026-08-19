@@ -1,0 +1,57 @@
+.. SPDX-FileCopyrightText: 2024 ETH Zurich and University of Bologna
+..
+.. SPDX-License-Identifier: Apache-2.0
+
+Deeploy.Targets.Torik.Deployer.TorikDeployer
+============================================
+
+.. currentmodule:: Deeploy.Targets.Torik.Deployer
+
+.. autoclass:: TorikDeployer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Methods
+   .. automethod:: __init__
+
+   .. autosummary::
+   
+      ~TorikDeployer.__init__
+      ~TorikDeployer.backEnd
+      ~TorikDeployer.bind
+      ~TorikDeployer.codeTransform
+      ~TorikDeployer.exportDeeployState
+      ~TorikDeployer.frontEnd
+      ~TorikDeployer.generateBufferAllocationCode
+      ~TorikDeployer.generateBufferDeAllocationCode
+      ~TorikDeployer.generateBufferInitializationCode
+      ~TorikDeployer.generateEngineInitializationCode
+      ~TorikDeployer.generateFunction
+      ~TorikDeployer.generateGlobalDefinitionCode
+      ~TorikDeployer.generateIOBufferInitializationCode
+      ~TorikDeployer.generateIncludeString
+      ~TorikDeployer.generateInferenceCode
+      ~TorikDeployer.generateInferenceInitializationCode
+      ~TorikDeployer.importDeeployState
+      ~TorikDeployer.inputs
+      ~TorikDeployer.lower
+      ~TorikDeployer.midEnd
+      ~TorikDeployer.numberOfOps
+      ~TorikDeployer.outputs
+      ~TorikDeployer.parse
+      ~TorikDeployer.prepare
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~TorikDeployer.worstCaseBufferSize
+   
+   

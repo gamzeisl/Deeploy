@@ -1,0 +1,47 @@
+.. SPDX-FileCopyrightText: 2024 ETH Zurich and University of Bologna
+..
+.. SPDX-License-Identifier: Apache-2.0
+
+Deeploy.Targets.Snitch.Layers.SnitchMulLayer
+============================================
+
+.. currentmodule:: Deeploy.Targets.Snitch.Layers
+
+.. autoclass:: SnitchMulLayer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   
+   .. rubric:: Methods
+   .. automethod:: __init__
+
+   .. autosummary::
+   
+      ~SnitchMulLayer.__init__
+      ~SnitchMulLayer.bind
+      ~SnitchMulLayer.broadcast
+      ~SnitchMulLayer.codeTransform
+      ~SnitchMulLayer.computeOps
+      ~SnitchMulLayer.computeShapes
+      ~SnitchMulLayer.discardCurrentMapper
+      ~SnitchMulLayer.generate
+      ~SnitchMulLayer.parse
+      ~SnitchMulLayer.resetDiscardedMappers
+      ~SnitchMulLayer.typeCheck
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SnitchMulLayer.maps
+      ~SnitchMulLayer.mapper
+      ~SnitchMulLayer.discardedMappers
+      ~SnitchMulLayer.node
+   
+   
